@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ElektroQuest: Tantangan Elektrokimia</title>
+    <style>
+        /* Global Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+            color: white;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        @keyframes gradientBG {
+            0% {background-position: 0% 50%;}
+            50% {background-position: 100% 50%;}
+            100% {background-position: 0% 50%;}
+        }
+        
+        .container {
+            max-width: 900px;
+            width: 90%;
+            text-align: center;
+            background-color: rgba(0, 0, 0, 0.7);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
+        }
+        
+        h1 {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            color: #fdbb2d;
+            text-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+        }
+        
+        h2 {
+            font-size: 1.5rem;
+            margin-bottom: 30px;
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 15px 30px;
+            background: linear-gradient(45deg, #fdbb2d, #b21f1f);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.2rem;
+            margin: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+        
+        .btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
+        }
+        
+        /* Content Sections */
+        section {
+            display: none;
+            padding: 20px;
+        }
+        
+        section.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        /* Rules Section */
+        .rule-box {
+            background-color: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            text-align: left;
+        }
+        
+        .rule-box p {
+            margin-bottom: 10px;
+        }
+        
+        /* Game Section */
+        .game-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .game-header {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+        
+        .timer {
+            font-size: 1.5rem;
+            background-color: rgba(253, 187, 45, 0.8);
+            padding: 10px 20px;
+            border-radius: 10px;
+            color: black;
+        }
+        
+        .score {
+            font-size: 1.5rem;
+            background-color: rgba(178, 31, 31, 0.8);
+            padding: 10px 20px;
+            border-radius: 10px;
+        }
+        
+        .game-content {
+            display: flex;
+            width: 100%;
+            margin-bottom: 20px;
+        }
+        
+        .electrolysis-cell {
+            width: 50%;
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 20px;
+            border-radius: 10px;
+            position: relative;
+            height: 300px;
+        }
+        
+        .cell-svg {
+            width: 100%;
+            height: 100%;
+        }
+        
+        .cell-info {
+            width: 50%;
+            padding: 20px;
+            background-color: rgba(26, 42, 108, 0.8);
+            border-radius: 10px;
+            margin-left: 20px;
+            text-align: left;
+        }
+        
+        .available-ions {
+            margin-top: 20px;
+            font-size: 1.2rem;
+        }
+        
+        .ion-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .ion-badge {
+            background-color: rgba(255, 255, 255, 0.2);
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+        
+        .reaction-options {
+            margin-top: 20px;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .electrode-section {
+            width: 100%;
+        }
+        
+        .electrode-title {
+            background-color: rgba(255, 255, 255, 0.2);
+            padding: 10px;
+            border-radius: 5px 5px 0 0;
+            font-weight: bold;
+        }
+        
+        .options {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .option-btn {
+            padding: 10px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 5px;
+            cursor: pointer;
+            text-align: left;
+            transition: all 0.2s ease;
+        }
+        
+        .option-btn:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+        
+        .option-btn.selected {
+            background-color: rgba(26, 42, 108, 0.6);
+            border-color: #fdbb2d;
+        }
+        
+        .option-btn.correct {
+            background-color: rgba(50, 205, 50, 0.6);
+            border-color: rgb(50, 205, 50);
+        }
+        
+        .option-btn.incorrect {
+            background-color: rgba(220, 20, 60, 0.6);
+            border-color: rgb(220, 20, 60);
+        }
+        
+        .submit-btn {
+            margin-top: 20px;
+            padding: 15px 30px;
+            background: linear-gradient(45deg, #1a2a6c, #b21f1f);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .submit-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+        }
+        
+        /* Results Section */
+        .results-container {
+            background-color: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 10px;
+            text-align: left;
+            margin-bottom: 20px;
+        }
+        
+        .result-level {
+            margin-bottom: 30px;
+        }
+        
+        .result-level h3 {
+            border-bottom: 1px solid #fdbb2d;
+            padding-bottom: 10px;
+            margin-bottom: 10px;
+        }
+        
+        .reaction-explanation {
+            background-color: rgba(26, 42, 108, 0.5);
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 15px;
+        }
+        
+        /* Materials Section */
+        .materials-container {
+            background-color: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 10px;
+            text-align: left;
+        }
+        
+        .materials-section {
+            margin-bottom: 20px;
+        }
+        
+        .materials-section h3 {
+            border-bottom: 1px solid #fdbb2d;
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Home Screen -->
+        <section id="home" class="active">
+            <h1>ElektroQuest</h1>
+            <h2>Tantangan Elektrokimia</h2>
+            <p>Uji pemahamanmu tentang reaksi elektrolisis dalam berbagai larutan elektrolit!</p>
+            <div class="buttons">
+                <button class="btn" onclick="showSection('game')">Mulai Permainan</button>
+                <button class="btn" onclick="showSection('rules')">Panduan Bermain</button>
+                <button class="btn" onclick="showSection('materials')">Materi Elektrolisis</button>
+            </div>
+        </section>
+        
+        <!-- Rules Screen -->
+        <section id="rules">
+            <h2>Panduan Bermain</h2>
+            <div class="rule-box">
+                <p>Selamat datang di ElektroQuest! Dalam game ini, kamu akan menguji pemahaman tentang reaksi elektrolisis.</p>
+                <p>Setiap level menampilkan satu jenis sel elektrolisis. Tugasmu adalah menentukan reaksi yang terjadi pada katoda dan anoda.</p>
+                <p>Perhatikan ion-ion yang tersedia dalam larutan, dan pilih reaksi yang benar.</p>
+                <p>Kamu punya waktu 60 detik untuk menjawab setiap soal. Semakin cepat menjawab, semakin tinggi skormu!</p>
+            </div>
+            <button class="btn" onclick="showSection('home')">Kembali</button>
+        </section>
+        
+        <!-- Game Screen -->
+        <section id="game">
+            <div class="game-container">
+                <div class="game-header">
+                    <div class="level">Level: <span id="current-level">1</span>/5</div>
+                    <div class="timer">Waktu: <span id="time-left">60</span>s</div>
+                    <div class="score">Skor: <span id="current-score">0</span></div>
+                </div>
+                
+                <div class="game-content">
+                    <div class="electrolysis-cell">
+                        <!-- SVG representation of the electrolysis cell -->
+                        <svg class="cell-svg" viewBox="0 0 400 300">
+                            <!-- Background rectangle -->
+                            <rect x="50" y="50" width="300" height="200" fill="#d4f1f9" stroke="#333" stroke-width="2"/>
+                            
+                            <!-- Electrodes -->
+                            <rect id="cathode" x="80" y="30" width="20" height="240" fill="#333" stroke="#000" stroke-width="1"/>
+                            <rect id="anode" x="300" y="30" width="20" height="240" fill="#333" stroke="#000" stroke-width="1"/>
+                            
+                            <!-- Electrode labels -->
+                            <text x="90" y="290" text-anchor="middle" fill="#000" font-size="14">Katoda (-)</text>
+                            <text x="310" y="290" text-anchor="middle" fill="#000" font-size="14">Anoda (+)</text>
+                            
+                            <!-- Solution level line -->
+                            <line x1="50" y1="70" x2="350" y2="70" stroke="#333" stroke-width="1" stroke-dasharray="5,5"/>
+                            
+                            <!-- Power source -->
+                            <rect x="160" y="10" width="80" height="30" fill="#f9d4d4" stroke="#000" stroke-width="2"/>
+                            <text x="200" y="30" text-anchor="middle" fill="#000" font-size="14">DC</text>
+                            
+                            <!-- Connecting wires -->
+                            <line x1="90" y1="30" x2="160" y2="25" stroke="#000" stroke-width="2"/>
+                            <line x1="310" y1="30" x2="240" y2="25" stroke="#000" stroke-width="2"/>
+                            
+                            <!-- Ions Animation (will be controlled by JS) -->
+                            <g id="ions-container"></g>
+                            
+                            <!-- Bubbles Animation (will be controlled by JS) -->
+                            <g id="bubbles-container"></g>
+                        </svg>
+                    </div>
+                    
+                    <div class="cell-info">
+                        <h3 id="cell-description">Larutan natrium klorida (NaCl) dengan elektroda grafit (inert)</h3>
+                        <div class="available-ions">
+                            <p>Ion dalam larutan:</p>
+                            <div class="ion-list" id="ion-list">
+                                <span class="ion-badge">Na⁺</span>
+                                <span class="ion-badge">Cl⁻</span>
+                                <span class="ion-badge">H₂O</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="reaction-options">
+                    <div class="electrode-section">
+                        <div class="electrode-title">Reaksi di Katoda (elektroda negatif):</div>
+                        <div class="options" id="cathode-options">
+                            <button class="option-btn" data-option="1" onclick="selectOption('cathode', '1')">2H₂O + 2e⁻ → H₂ + 2OH⁻</button>
+                            <button class="option-btn" data-option="2" onclick="selectOption('cathode', '2')">Na⁺ + e⁻ → Na</button>
+                            <button class="option-btn" data-option="3" onclick="selectOption('cathode', '3')">2Cl⁻ → Cl₂ + 2e⁻</button>
+                        </div>
+                    </div>
+                    
+                    <div class="electrode-section">
+                        <div class="electrode-title">Reaksi di Anoda (elektroda positif):</div>
+                        <div class="options" id="anode-options">
+                            <button class="option-btn" data-option="1" onclick="selectOption('anode', '1')">2Cl⁻ → Cl₂ + 2e⁻</button>
+                            <button class="option-btn" data-option="2" onclick="selectOption('anode', '2')">2H₂O → O₂ + 4H⁺ + 4e⁻</button>
+                            <button class="option-btn" data-option="3" onclick="selectOption('anode', '3')">4OH⁻ → O₂ + 2H₂O + 4e⁻</button>
+                        </div>
+                    </div>
+                    
+                    <button id="submit-btn" class="submit-btn" onclick="checkAnswers()">Periksa Jawaban</button>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Results Screen -->
+        <section id="results">
+            <h2>Hasil Permainan</h2>
+            <div class="final-score">
+                <h3>Skor Akhir: <span id="final-score">0</span>/1000</h3>
+                <h3>Peringkat: <span id="rank">Pemula Elektrolisis</span></h3>
+            </div>
+            
+            <div class="results-container">
+                <div class="result-level">
+                    <h3>Level 1: Elektrolisis Larutan NaCl dengan Elektroda Inert</h3>
+                    <p><strong>Reaksi di Katoda:</strong> 2H₂O + 2e⁻ → H₂ + 2OH⁻</p>
+                    <p><strong>Reaksi di Anoda:</strong> 2Cl⁻ → Cl₂ + 2e⁻</p>
+                    <div class="reaction-explanation">
+                        <p>Dalam elektrolisis larutan NaCl:</p>
+                        <p>• Di katoda: Air tereduksi menjadi gas hidrogen dan ion hidroksida (bukan ion Na⁺) karena Na⁺ lebih sulit direduksi dibanding air.</p>
+                        <p>• Di anoda: Ion klorida teroksidasi menjadi gas klorin (bukan air) karena Cl⁻ lebih mudah teroksidasi dibanding air.</p>
+                        <p>• Perhatikan perbedaannya dengan elektrolisis lelehan NaCl dimana tidak ada air yang terlibat.</p>
+                    </div>
+                </div>
+                
+                <!-- More result levels will be dynamically added here -->
+            </div>
+            
+            <div class="buttons">
+                <button class="btn" onclick="resetGame()">Main Lagi</button>
+                <button class="btn" onclick="showSection('home')">Menu Utama</button>
+            </div>
+        </section>
+        
+        <!-- Materials Screen -->
+        <section id="materials">
+            <h2>Materi Elektrolisis</h2>
+            <div class="materials-container">
+                <div class="materials-section">
+                    <h3>Pengertian Elektrolisis</h3>
+                    <p>Elektrolisis merupakan proses kimia di mana energi listrik digunakan untuk mendorong reaksi redoks yang tidak spontan. Dalam sel elektrolisis, listrik mengalir dari sumber daya ke anoda (elektroda positif), kemudian melalui larutan elektrolit ke katoda (elektroda negatif), dan kembali ke sumber daya.</p>
+                </div>
+                
+                <div class="materials-section">
+                    <h3>Prinsip Dasar Elektrolisis</h3>
+                    <p>Pada proses elektrolisis:</p>
+                    <p>1. <strong>Reduksi</strong> terjadi di <strong>katoda</strong> (elektroda negatif) - kation (ion positif) menuju katoda dan menerima elektron.</p>
+                    <p>2. <strong>Oksidasi</strong> terjadi di <strong>anoda</strong> (elektroda positif) - anion (ion negatif) menuju anoda dan melepas elektron.</p>
+                    <p>3. Jumlah perubahan oksidasi harus setara dengan jumlah perubahan reduksi (hukum kekekalan muatan).</p>
+                </div>
+                
+                <div class="materials-section">
+                    <h3>Faktor yang Mempengaruhi Produk Elektrolisis</h3>
+                    <p>Produk elektrolisis ditentukan oleh beberapa faktor:</p>
+                    <p>1. <strong>Jenis elektrolit</strong> (lelehan atau larutan)</p>
+                    <p>2. <strong>Jenis elektroda</strong> (inert/tidak bereaksi atau aktif/dapat bereaksi)</p>
+                    <p>3. <strong>Potensial reduksi standar</strong> (E°) dari ion-ion yang ada</p>
+                    <p>4. <strong>Konsentrasi ion</strong> dalam larutan</p>
+                </div>
+                
+                <div class="materials-section">
+                    <h3>Perbedaan Elektrolisis Lelehan dan Larutan</h3>
+                    <p><strong>Elektrolisis Lelehan:</strong> Hanya ada ion-ion dari elektrolit (tidak ada air), sehingga ion-ion tersebut yang akan mengalami reaksi redoks.</p>
+                    <p><strong>Elektrolisis Larutan:</strong> Selain ion-ion dari elektrolit, terdapat juga molekul air (H₂O) yang dapat mengalami reaksi redoks. Reaksi yang terjadi bergantung pada potensial reduksi standar ion.</p>
+                </div>
+            </div>
+            <button class="btn" onclick="showSection('home')">Kembali</button>
+        </section>
+    </div>
+
+    <script>
+        // Game data
+        const levelData = [
+            {
+                level: 1,
+                description: "Larutan natrium klorida (NaCl) dengan elektroda grafit (inert)",
+                ions: ["Na⁺", "Cl⁻", "H₂O"],
+                cathodeOptions: [
+                    "2H₂O + 2e⁻ → H₂ + 2OH⁻",
+                    "Na⁺ + e⁻ → Na",
+                    "2Cl⁻ → Cl₂ + 2e⁻"
+                ],
+                anodeOptions: [
+                    "2Cl⁻ → Cl₂ + 2e⁻",
+                    "2H₂O → O₂ + 4H⁺ + 4e⁻",
+                    "4OH⁻ → O₂ + 2H₂O + 4e⁻"
+                ],
+                cathodeCorrect: "1",
+                anodeCorrect: "1",
+                explanation: "Dalam elektrolisis larutan NaCl:<br>• Di katoda: Air tereduksi menjadi gas hidrogen dan ion hidroksida (bukan ion Na⁺) karena Na⁺ lebih sulit direduksi dibanding air.<br>• Di anoda: Ion klorida teroksidasi menjadi gas klorin (bukan air) karena Cl⁻ lebih mudah teroksidasi dibanding air.<br>• Perhatikan perbedaannya dengan elektrolisis lelehan NaCl dimana tidak ada air yang terlibat."
+            },
+            {
+                level: 2,
+                description: "Larutan tembaga(II) sulfat (CuSO₄) dengan elektroda tembaga",
+                ions: ["Cu²⁺", "SO₄²⁻", "H₂O"],
+                cathodeOptions: [
+                    "Cu²⁺ + 2e⁻ → Cu",
+                    "2H₂O + 2e⁻ → H₂ + 2OH⁻",
+                    "SO₄²⁻ + 4H⁺ + 2e⁻ → SO₂ + 2H₂O"
+                ],
+                anodeOptions: [
+                    "Cu → Cu²⁺ + 2e⁻",
+                    "2H₂O → O₂ + 4H⁺ + 4e⁻",
+                    "SO₄²⁻ → SO₂ + O₂ + 2e⁻"
+                ],
+                cathodeCorrect: "1",
+                anodeCorrect: "1",
+                explanation: "Dalam elektrolisis larutan CuSO₄ dengan elektroda tembaga:<br>• Di katoda: Ion Cu²⁺ tereduksi menjadi logam Cu karena potensial reduksinya lebih tinggi daripada air.<br>• Di anoda: Elektroda tembaga (Cu) teroksidasi menjadi ion Cu²⁺. Ini karena elektroda tembaga bersifat aktif (bukan inert).<br>• Proses ini merupakan contoh penyepuhan (elektroplating) dimana tembaga dari anoda berpindah ke katoda."
+            },
+            {
+                level: 3,
+                description: "Larutan asam sulfat (H₂SO₄) dengan elektroda platina (inert)",
+                ions: ["H⁺", "SO₄²⁻", "H₂O"],
+                cathodeOptions: [
+                    "2H⁺ + 2e⁻ → H₂",
+                    "SO₄²⁻ + 4H⁺ + 2e⁻ → H₂SO₃ + H₂O",
+                    "2H₂O + 2e⁻ → H₂ + 2OH⁻"
+                ],
+                anodeOptions: [
+                    "2H₂O → O₂ + 4H⁺ + 4e⁻",
+                    "2SO₄²⁻ → S₂O₈²⁻ + 2e⁻",
+                    "H₂O → ½O₂ + 2H⁺ + 2e⁻"
+                ],
+                cathodeCorrect: "1",
+                anodeCorrect: "1",
+                explanation: "Dalam elektrolisis larutan H₂SO₄ dengan elektroda platina (inert):<br>• Di katoda: Ion H⁺ tereduksi menjadi gas H₂ karena konsentrasinya yang tinggi dalam larutan asam.<br>• Di anoda: Molekul air teroksidasi menjadi gas O₂, ion H⁺, dan elektron. Ion SO₄²⁻ tidak bereaksi karena potensial oksidasinya lebih tinggi dibanding air.<br>• Reaksi keseluruhan menunjukkan elektrolisis air menghasilkan gas H₂ dan O₂."
+            },
+            {
+                level: 4,
+                description: "Lelehan natrium klorida (NaCl) dengan elektroda grafit (inert)",
+                ions: ["Na⁺", "Cl⁻"],
+                cathodeOptions: [
+                    "Na⁺ + e⁻ → Na",
+                    "2H₂O + 2e⁻ → H₂ + 2OH⁻",
+                    "Cl⁻ + e⁻ → Cl"
+                ],
+                anodeOptions: [
+                    "2Cl⁻ → Cl₂ + 2e⁻",
+                    "2O²⁻ → O₂ + 4e⁻",
+                    "2Na⁺ → 2Na + 2e⁻"
+                ],
+                cathodeCorrect: "1",
+                anodeCorrect: "1",
+                explanation: "Dalam elektrolisis lelehan NaCl dengan elektroda inert:<br>• Di katoda: Ion Na⁺ tereduksi menjadi logam Na. Tidak seperti dalam larutan, di lelehan tidak ada air sehingga ion Na⁺ yang bereaksi.<br>• Di anoda: Ion Cl⁻ teroksidasi menjadi gas Cl₂.<br>• Proses ini digunakan dalam industri untuk menghasilkan logam natrium dan gas klorin."
+            },
+            {
+                level: 5,
+                description: "Larutan perak nitrat (AgNO₃) dengan elektroda perak",
+                ions: ["Ag⁺", "NO₃⁻", "H₂O"],
+                cathodeOptions: [
+                    "Ag⁺ + e⁻ → Ag",
+                    "NO₃⁻ + 4H⁺ + 3e⁻ → NO + 2H₂O",
+                    "2H₂O + 2e⁻ → H₂ + 2OH⁻"
+                ],
+                anodeOptions: [
+                    "Ag → Ag⁺ + e⁻",
+                    "2H₂O → O₂ + 4H⁺ + 4e⁻",
+                    "4OH⁻ → O₂ + 2H₂O + 4e⁻"
+                ],
+                cathodeCorrect: "1",
+                anodeCorrect: "1",
+                explanation: "Dalam elektrolisis larutan AgNO₃ dengan elektroda perak:<br>• Di katoda: Ion Ag⁺ tereduksi menjadi logam Ag karena potensial reduksinya lebih tinggi daripada air.<br>• Di anoda: Elektroda perak (Ag) teroksidasi menjadi ion Ag⁺. Ini karena elektroda perak bersifat aktif.<br>• Proses ini juga merupakan contoh elektroplating, dimana perak dari anoda berpindah ke katoda. Proses ini digunakan dalam industri pelapisan perak."
+            }
+        ];
+        
+        // Game variables
+        let currentLevel = 1;
+        let totalScore = 0;
+        let levelScore = 0;
+        let timeLeft = 60;
+        let timer;
+        let selectedCathode = null;
+        let selectedAnode = null;
+        let levelStartTime;
+        
+        // --- Navigasi antar section ---
+        function showSection(sectionId) {
+            document.querySelectorAll('section').forEach(sec => sec.classList.remove('active'));
+            document.getElementById(sectionId).classList.add('active');
+            if (sectionId === 'game') startLevel(1);
+            if (sectionId !== 'game') stopTimer();
+        }
+
+        // --- Timer ---
+        function startTimer() {
+            timeLeft = 60;
+            document.getElementById('time-left').textContent = timeLeft;
+            timer = setInterval(() => {
+                timeLeft--;
+                document.getElementById('time-left').textContent = timeLeft;
+                if (timeLeft <= 0) {
+                    clearInterval(timer);
+                    checkAnswers(true); // waktu habis
+                }
+            }, 1000);
+        }
+        function stopTimer() {
+            clearInterval(timer);
+        }
+
+        // --- Mulai level baru ---
+        function startLevel(level) {
+            currentLevel = level;
+            selectedCathode = null;
+            selectedAnode = null;
+            document.getElementById('current-level').textContent = currentLevel;
+            document.getElementById('current-score').textContent = totalScore;
+            document.getElementById('submit-btn').disabled = false;
+            document.getElementById('submit-btn').textContent = "Periksa Jawaban";
+            // Data level
+            const data = levelData[level - 1];
+            document.getElementById('cell-description').textContent = data.description;
+            // Ion list
+            const ionList = document.getElementById('ion-list');
+            ionList.innerHTML = '';
+            data.ions.forEach(ion => {
+                const span = document.createElement('span');
+                span.className = 'ion-badge';
+                span.textContent = ion;
+                ionList.appendChild(span);
+            });
+            // Opsi katoda
+            const cathodeOptions = document.getElementById('cathode-options');
+            cathodeOptions.innerHTML = '';
+            data.cathodeOptions.forEach((opt, i) => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn';
+                btn.dataset.option = (i + 1).toString();
+                btn.onclick = () => selectOption('cathode', btn.dataset.option);
+                btn.textContent = opt;
+                cathodeOptions.appendChild(btn);
+            });
+            // Opsi anoda
+            const anodeOptions = document.getElementById('anode-options');
+            anodeOptions.innerHTML = '';
+            data.anodeOptions.forEach((opt, i) => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn';
+                btn.dataset.option = (i + 1).toString();
+                btn.onclick = () => selectOption('anode', btn.dataset.option);
+                btn.textContent = opt;
+                anodeOptions.appendChild(btn);
+            });
+            // Reset animasi (jika ingin menambah animasi ion/bubble)
+            document.getElementById('ions-container').innerHTML = '';
+            document.getElementById('bubbles-container').innerHTML = '';
+            // Timer
+            startTimer();
+            levelStartTime = Date.now();
+        }
+
+        // --- Pilih opsi jawaban ---
+        function selectOption(electrode, option) {
+            if (document.getElementById('submit-btn').disabled) return;
+            if (electrode === 'cathode') {
+                selectedCathode = option;
+                document.querySelectorAll('#cathode-options .option-btn').forEach(btn => {
+                    btn.classList.toggle('selected', btn.dataset.option === option);
+                });
+            } else {
+                selectedAnode = option;
+                document.querySelectorAll('#anode-options .option-btn').forEach(btn => {
+                    btn.classList.toggle('selected', btn.dataset.option === option);
+                });
+            }
+        }
+
+        // --- Cek jawaban ---
+        function checkAnswers(timeUp = false) {
+            stopTimer();
+            const data = levelData[currentLevel - 1];
+            let correct = false;
+            // Highlight jawaban
+            document.querySelectorAll('#cathode-options .option-btn').forEach(btn => {
+                if (btn.dataset.option === data.cathodeCorrect) btn.classList.add('correct');
+                else if (btn.classList.contains('selected')) btn.classList.add('incorrect');
+            });
+            document.querySelectorAll('#anode-options .option-btn').forEach(btn => {
+                if (btn.dataset.option === data.anodeCorrect) btn.classList.add('correct');
+                else if (btn.classList.contains('selected')) btn.classList.add('incorrect');
+            });
+            // Penilaian
+            if (!timeUp && selectedCathode === data.cathodeCorrect && selectedAnode === data.anodeCorrect) {
+                correct = true;
+                // Skor: 200 per level + bonus waktu (maks 200)
+                let bonus = Math.max(0, 200 - (60 - timeLeft) * 3);
+                levelScore = 200 + bonus;
+                totalScore += levelScore;
+                playSound(true);
+            } else {
+                levelScore = 0;
+                playSound(false);
+            }
+            document.getElementById('current-score').textContent = totalScore;
+            document.getElementById('submit-btn').disabled = true;
+            document.getElementById('submit-btn').textContent = currentLevel < levelData.length ? "Lanjut Level Berikutnya" : "Lihat Hasil";
+            // Next step
+            document.getElementById('submit-btn').onclick = () => {
+                if (currentLevel < levelData.length) {
+                    startLevel(currentLevel + 1);
+                } else {
+                    showResults();
+                }
+            };
+        }
+
+        // --- Tampilkan hasil akhir ---
+        function showResults() {
+            showSection('results');
+            document.getElementById('final-score').textContent = totalScore;
+            // Rank
+            let rank = "Pemula Elektrolisis";
+            if (totalScore >= 900) rank = "Master Elektrokimia";
+            else if (totalScore >= 700) rank = "Ahli Elektrolisis";
+            else if (totalScore >= 500) rank = "Cerdas Kimia";
+            else if (totalScore >= 300) rank = "Pelajar Berbakat";
+            document.getElementById('rank').textContent = rank;
+            // Detail hasil per level
+            const resultsContainer = document.querySelector('.results-container');
+            resultsContainer.innerHTML = '';
+            for (let i = 0; i < levelData.length; i++) {
+                const data = levelData[i];
+                const div = document.createElement('div');
+                div.className = 'result-level';
+                div.innerHTML = `
+                    <h3>Level ${i + 1}: ${data.description}</h3>
+                    <p><strong>Reaksi di Katoda:</strong> ${data.cathodeOptions[parseInt(data.cathodeCorrect) - 1]}</p>
+                    <p><strong>Reaksi di Anoda:</strong> ${data.anodeOptions[parseInt(data.anodeCorrect) - 1]}</p>
+                    <div class="reaction-explanation">${data.explanation}</div>
+                `;
+                resultsContainer.appendChild(div);
+            }
+        }
+
+        // --- Reset game ---
+        function resetGame() {
+            totalScore = 0;
+            showSection('game');
+        }
+
+        // --- Suara benar/salah sederhana ---
+        function playSound(correct) {
+            // Suara sederhana (opsional, bisa dihapus jika tidak ingin suara)
+            if (window.Audio) {
+                const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                const o = ctx.createOscillator();
+                const g = ctx.createGain();
+                o.type = 'sine';
+                o.frequency.value = correct ? 880 : 220;
+                g.gain.value = 0.1;
+                o.connect(g).connect(ctx.destination);
+                o.start();
+                setTimeout(() => { o.stop(); ctx.close(); }, 200);
+            }
+        }
+
+        // --- Mulai di halaman home ---
+        showSection('home');
+</script>
+</body>
+</html>
